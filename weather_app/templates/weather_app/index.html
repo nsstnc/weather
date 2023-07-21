@@ -1,0 +1,391 @@
+{% load static %}
+{% load my_filter %}
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body, header {
+        width: 100%;
+    }
+    .temperature{
+        font-size: 52px;
+    }
+    .row {
+        margin: 0;
+        width: auto;
+        background: lightblue;
+        color: rgba(255, 255, 255, 0.8);
+        opacity: 0.8;
+
+    }
+
+    .lang,
+    .logo,
+    .lang:active,
+    .lang:visited,
+    .lang:focus {
+        color: rgba(255, 255, 255, 1);
+        text-decoration: none;
+    }
+
+    .lang:hover,
+    .logo:hover,
+    .history-footer:hover,
+    .item:hover {
+        color: midnightblue;
+        text-decoration: none;
+    }
+
+    html::-webkit-scrollbar {
+        display: none;
+    }
+
+    .history-block::-webkit-scrollbar {
+    }
+
+    .bgvideo {
+        position: fixed;
+        left: 0;
+        top: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -9999;
+    }
+
+
+    .main {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-items: center;
+        width: 100%;
+        height: 100%;
+        margin: auto 0 auto 0;
+    }
+
+    .left, .right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-items: center;
+        width: 50%;
+        height: 600px;
+    }
+
+
+    .main_info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-items: center;
+        width: 50%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.6);
+        margin: 10px 10px 10px auto;
+        box-sizing: border-box;
+        padding: 30px;
+        border-radius: 15px;
+    }
+
+    .date {
+        margin-bottom: 0;
+        margin-top: auto;
+    }
+
+    .description,
+    .temp-feels,
+    .humidity {
+        margin-bottom: 15px;
+    }
+
+    .description {
+        margin-top: auto;
+    }
+
+    .form_div,
+    .history,
+    .main_info {
+        width: 40%;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 30px;
+    }
+
+    .form_div {
+        height: 15%;
+        border-radius: 15px;
+        margin: 10px auto 0 5px;
+        position: relative;
+    }
+
+    .big {
+        margin: 15% auto auto auto;
+        transition: 0.2s linear;
+    }
+
+    .main_info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-items: center;
+        height: 100%;
+        margin: 10px 5px 10px auto;
+        box-sizing: border-box;
+        border-radius: 15px;
+    }
+
+    .history {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-items: left;
+        text-align: left;
+        height: 85%;
+        margin: 10px auto 10px 5px;
+        box-sizing: border-box;
+        border-radius: 15px;
+        overflow: hidden;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .history-heading {
+        padding-bottom: 10px;
+    }
+
+    .history-footer {
+        padding-top: 10px;
+
+    }
+
+    .history-block {
+        overflow-y: auto;
+        height: 100%;
+        width: 100%;
+    }
+
+    .history-block::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0);
+    }
+
+    .history-block::-webkit-scrollbar {
+        width: 5px;
+        background-color: rgba(255, 255, 255, 0);
+    }
+
+    .history-block::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .history-block::-webkit-scrollbar-thumb:hover {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+    }
+
+    .input-group {
+        opacity: 0.8;
+    }
+
+    .results-card {
+        position: absolute;
+        left: auto;
+        top: 70%;
+        height: auto;
+        background: #fff;
+        width: auto;
+        min-width: 80%;
+        border-radius: 3px;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+        margin-top: 5px;
+        z-index: 20000;
+    }
+
+    .not-visible {
+        display: none;
+    }
+
+    .form {
+        width: 100%;
+    }
+
+    .main_info img {
+        border: 0;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0);
+    }
+
+    .item {
+        text-decoration: none;
+        margin: auto auto auto auto;
+        width: auto;
+        font-size: 14px;
+        max-height: 20px;
+        line-height: 14px;
+    }
+
+    .history-item {
+        font-size: 18px;
+    }
+
+    p {
+        position: relative;
+        height: auto;
+        max-height: 40px;
+        margin-top: 15px;
+        padding-top: 5px;
+        left: 0;
+
+    }
+
+    p:last-child {
+        margin-bottom: 15px
+    }
+
+</style>
+<head>
+    <meta charset="utf-8">
+    {% if lang == 'ru' %}
+        <title>Погода</title>
+    {% else %}
+        <title>Weather</title>
+    {% endif %}
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    {% block scripts %}
+        <script src="{% static 'main.js' %}" defer></script>
+    {% endblock %}
+
+</head>
+<header>
+    <div class="row">
+        <h1 class="col-md-4 text-center"><a class='logo' href="clear/">GoodWeather</a> | <a id='lang' class='lang'
+                                                                                            href="">{{ lang }}</a></h1>
+        {#        <a href="#"><h1 class="col-md-1 text-left">{{ lang }}</h1></a>#}
+    </div>
+</header>
+<body>
+
+<br/>
+<br/>
+
+<section class="main">
+    {% if history %}
+
+    {% if lang == 'ru' %}
+
+        <div class="left">
+            <div class="main_info">
+                {% if info %}
+                    <h2 id='city' class="city">{{ info.city|translate }}</h2>
+                    <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
+                    <p class="temperature">{{ info.temp }}&deg;C</p>
+                    <h4 class="description">{{ info.description|capfirst|translate }}</h4>
+                    <h4 class="temp-feels">Ощущается как {{ info.feels_like }}&deg;C</h4>
+                    <h4 class="humidity">Влажность {{ info.humidity }}%</h4>
+                    <h5 class="date">{{ info.date_time }}</h5>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+        <div class="left">
+            <div class="main_info">
+                {% if info %}
+                    <h2 id='city' class="city">{{ info.city }}</h2>
+                    <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
+                    <p class="temperature">{{ info.temp }}&deg;C</p>
+                    <h4 class="description">{{ info.description|capfirst }}</h4>
+                    <h4 class="temp-feels">Feels like {{ info.feels_like }}&deg;C</h4>
+                    <h4 class="humidity">Humidity {{ info.humidity }}%</h4>
+                    <h5 class="date">{{ info.date_time }}</h5>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+
+    <div class="right">
+        <div class="form_div">
+            <form method="post" id="search-form" class="form">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ form.name }}
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit" id="submit-button">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id='results-box' class="results-card not-visible"></div>
+        </div>
+        <div class="history">
+                {% if lang == 'ru' %}
+                    <div class="history-heading">История</div>
+                {% else %}
+                    <div class="history-heading">History</div>
+                {% endif %}
+                <div class="history-block">
+                    {% for city in history %}
+                        {% with city|split:", " as a %}
+                            <p><a href="#" id='{{ a.1 }}' class='item history-item'>{{ a.0 }}, {{ a.1 }}</a></p>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+                {% if lang == 'ru' %}
+                    <a href="clear/" class="history-footer">Очистить</a>
+                {% else %}
+                    <a href="clear/" class="history-footer">Clear</a>
+                {% endif %}
+
+
+                </div>
+
+            {% else %}
+                <div class="form_div big">
+                    <form method="post" id="search-form" class="form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.name }}
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit" id="submit-button">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id='results-box' class="results-card not-visible"></div>
+                </div>
+
+            {% endif %}
+</section>
+<video autoplay loop muted class="bgvideo" id="bgvideo">
+
+    {% if info %}
+        <source src="media/{{ info.background }}"/>
+    {% else %}
+        <source src="media/{{ background }}"/>
+    {% endif %}
+</video>
+</body>
+
+</html>
