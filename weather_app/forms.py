@@ -11,7 +11,7 @@ class CityForm(ModelForm):
         widgets = {'name': TextInput(attrs={'class': 'form-control',
                                             'name': 'city',
                                             'id': 'search-input',
-                                            'placeholder': 'Введите город ...',
+                                            'placeholder': '',
                                             'autocomplete': "off"
                                             })}
 

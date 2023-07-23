@@ -11,9 +11,11 @@
     body, header {
         width: 100%;
     }
-    .temperature{
+
+    .temperature {
         font-size: 52px;
     }
+
     .row {
         margin: 0;
         width: auto;
@@ -290,40 +292,40 @@
 <section class="main">
     {% if history %}
 
-    {% if lang == 'ru' %}
+        {% if lang == 'ru' %}
 
-        <div class="left">
-            <div class="main_info">
-                {% if info %}
-                    <h2 id='city' class="city">{{ info.city|translate }}</h2>
-                    <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
-                    <p class="temperature">{{ info.temp }}&deg;C</p>
-                    <h4 class="description">{{ info.description|capfirst|translate }}</h4>
-                    <h4 class="temp-feels">Ощущается как {{ info.feels_like }}&deg;C</h4>
-                    <h4 class="humidity">Влажность {{ info.humidity }}%</h4>
-                    <h5 class="date">{{ info.date_time }}</h5>
-                {% endif %}
+            <div class="left">
+                <div class="main_info">
+                    {% if info %}
+                        <h2 id='city' class="city">{{ info.city|translate }}</h2>
+                        <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
+                        <p class="temperature">{{ info.temp }}&deg;C</p>
+                        <h4 class="description">{{ info.description|capfirst }}</h4>
+                        <h4 class="temp-feels">Ощущается как {{ info.feels_like }}&deg;C</h4>
+                        <h4 class="humidity">Влажность {{ info.humidity }}%</h4>
+                        <h5 class="date">{{ info.date_time }}</h5>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-    {% else %}
-        <div class="left">
-            <div class="main_info">
-                {% if info %}
-                    <h2 id='city' class="city">{{ info.city }}</h2>
-                    <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
-                    <p class="temperature">{{ info.temp }}&deg;C</p>
-                    <h4 class="description">{{ info.description|capfirst }}</h4>
-                    <h4 class="temp-feels">Feels like {{ info.feels_like }}&deg;C</h4>
-                    <h4 class="humidity">Humidity {{ info.humidity }}%</h4>
-                    <h5 class="date">{{ info.date_time }}</h5>
-                {% endif %}
+        {% else %}
+            <div class="left">
+                <div class="main_info">
+                    {% if info %}
+                        <h2 id='city' class="city">{{ info.city }}</h2>
+                        <img src='http://openweathermap.org/img/w/{{ info.icon }}.png' alt="" class="img-thumbnail"/>
+                        <p class="temperature">{{ info.temp }}&deg;C</p>
+                        <h4 class="description">{{ info.description|capfirst }}</h4>
+                        <h4 class="temp-feels">Feels like {{ info.feels_like }}&deg;C</h4>
+                        <h4 class="humidity">Humidity {{ info.humidity }}%</h4>
+                        <h5 class="date">{{ info.date_time }}</h5>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
 
-    <div class="right">
+        <div class="right">
         <div class="form_div">
             <form method="post" id="search-form" class="form">
                 {% csrf_token %}
@@ -339,44 +341,53 @@
             <div id='results-box' class="results-card not-visible"></div>
         </div>
         <div class="history">
+            {% if lang == 'ru' %}
+                <div class="history-heading">История</div>
+            {% else %}
+                <div class="history-heading">History</div>
+            {% endif %}
+            <div class="history-block">
                 {% if lang == 'ru' %}
-                    <div class="history-heading">История</div>
-                {% else %}
-                    <div class="history-heading">History</div>
-                {% endif %}
-                <div class="history-block">
                     {% for city in history %}
-                        {% with city|split:", " as a %}
+                        {% with city.0|split:", " as a %}
                             <p><a href="#" id='{{ a.1 }}' class='item history-item'>{{ a.0 }}, {{ a.1 }}</a></p>
                         {% endwith %}
                     {% endfor %}
-                </div>
-                {% if lang == 'ru' %}
-                    <a href="clear/" class="history-footer">Очистить</a>
                 {% else %}
-                    <a href="clear/" class="history-footer">Clear</a>
+                    {% for city in history %}
+                        {% with city.1|split:", " as a %}
+                            <p><a href="#" id='{{ a.1 }}' class='item history-item'>{{ a.0 }}, {{ a.1 }}</a></p>
+                        {% endwith %}
+                    {% endfor %}
                 {% endif %}
 
-
-                </div>
-
+            </div>
+            {% if lang == 'ru' %}
+                <a href="clear/" class="history-footer">Очистить</a>
             {% else %}
-                <div class="form_div big">
-                    <form method="post" id="search-form" class="form">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            {{ form.name }}
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="submit" id="submit-button">
-                                    <i class="glyphicon glyphicon-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    <div id='results-box' class="results-card not-visible"></div>
-                </div>
-
+                <a href="clear/" class="history-footer">Clear</a>
             {% endif %}
+
+
+        </div>
+
+    {% else %}
+        <div class="form_div big">
+            <form method="post" id="search-form" class="form">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ form.name }}
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit" id="submit-button">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id='results-box' class="results-card not-visible"></div>
+        </div>
+
+    {% endif %}
 </section>
 <video autoplay loop muted class="bgvideo" id="bgvideo">
 

@@ -15,9 +15,11 @@ def get_city_info(city):
     appid = '485c72e0e02b8ec897e58e082634c89d'
 
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&lang=' + lang + '&cnt=3&appid=' + appid
-    res = requests.get(url.format(city)).json()
-    # print(res)
-
+    if lang == 'ru':
+        res = requests.get(url.format(city[0])).json()
+    elif lang == 'en':
+        res = requests.get(url.format(city[1])).json()
+    print(city)
     ts = int(res['dt'])
     date_time = datetime.utcfromtimestamp(ts).strftime('%d.%m.%Y %H:%M')
 
@@ -75,6 +77,7 @@ def clearing(request):
 
 def change_lang(request):
     global lang  # работаем с глобальной переменной lang
+
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':  # является ли запрос AJAXом
         current_lang = request.POST.get('current_lang')  # получаем текущий язык
         if current_lang == 'ru':
@@ -88,11 +91,18 @@ def change_lang(request):
 
 def index(request):
     history = History(request)
-
     if (request.method == 'POST'):
         form = CityForm(request.POST)
         city = form['name'].value()
-        history.add(city)
+        splitted = city.split(', ')
+        if lang == 'ru':
+            field = AllCities.objects.get(city_ru=splitted[0], country_short=splitted[1])
+        elif lang == 'en':
+            field = AllCities.objects.get(city=splitted[0], country_short=splitted[1])
+        history.add([field.city_ru + ', ' + field.country_short,
+                     field.city + ', ' + field.country_short])
+        city = history.history[0]
+        print(history.history)
         # if not City.objects.filter(name=city).exists():
         #     form.save()
 
@@ -107,7 +117,11 @@ def index(request):
 
         form = CityForm()
         if lang == 'en':
-            form.fields['name'].widget.attrs['placeholder'] = 'Enter a city ...'  # замена placeholder формы при смене языка
+            form.fields['name'].widget.attrs[
+                'placeholder'] = 'Enter a city ...'
+        else:
+            form.fields['name'].widget.attrs[
+                'placeholder'] = 'Введите город ...' # замена placeholder формы при смене языка
 
         if len(history) > 0:
             city = history.history[0]
@@ -136,20 +150,34 @@ def search_results(request):
             country = city.split(',')[1]
             if len(country) > 0 and country[0] == ' ':
                 country = country.replace(' ', '', 1)
-            qs = AllCities.objects.filter(city__istartswith=town,
-                                          country__istartswith=country).order_by('city')
+            if lang == 'ru':
+                qs = AllCities.objects.filter(city_ru__istartswith=town,
+                                              country_ru__istartswith=country).order_by('city_ru')
+            elif lang == 'en':
+                qs = AllCities.objects.filter(city__istartswith=town,
+                                              country__istartswith=country).order_by('city')
         else:
-            qs = AllCities.objects.filter(city__istartswith=city).order_by('city')
+            if lang == 'ru':
+                qs = AllCities.objects.filter(city_ru__istartswith=city).order_by('city_ru')
+            elif lang == 'en':
+                qs = AllCities.objects.filter(city__istartswith=city).order_by('city')
         if len(qs) > 0:
             if len(qs) > 5:
                 qs = qs[0:5]
             data = []
             for pos in qs:
-                item = {
-                    'city': pos.city,
-                    'country': pos.country,
-                    'country_short': pos.country_short
-                }
+                if lang == 'ru':
+                    item = {
+                        'city': pos.city_ru,
+                        'country': pos.country_ru,
+                        'country_short': pos.country_short
+                    }
+                elif lang == 'en':
+                    item = {
+                        'city': pos.city,
+                        'country': pos.country,
+                        'country_short': pos.country_short
+                    }
                 data.append(item)
             res = data
         else:

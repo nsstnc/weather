@@ -13,6 +13,8 @@ class City(models.Model):
 class AllCities(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    city_ru = models.CharField(max_length=100, default='')
+    country_ru = models.CharField(max_length=100, default='')
     country_short = models.CharField(max_length=10, default='')
 
 

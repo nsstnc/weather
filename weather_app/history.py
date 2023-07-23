@@ -14,11 +14,14 @@ class History(object):
         # Добавить продукт в корзину или обновить его количество.
 
         if city not in self.history:
-            self.history.append(city)
+            self.history.insert(0, city)
+        else:
+            self.history.remove(city)
+            self.history.insert(0, city)
         self.save()
 
     def save(self):
-        # Обновление сессии cart
+        # Обновление сессии history
         self.session[settings.HISTORY_SESSION_ID] = self.history
         # Отметить сеанс как "измененный", чтобы убедиться, что он сохранен
         self.session.modified = True
