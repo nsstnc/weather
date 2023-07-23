@@ -19,7 +19,7 @@ def get_city_info(city):
         res = requests.get(url.format(city[0])).json()
     elif lang == 'en':
         res = requests.get(url.format(city[1])).json()
-    print(city)
+    # print(city)
     ts = int(res['dt'])
     date_time = datetime.utcfromtimestamp(ts).strftime('%d.%m.%Y %H:%M')
 
@@ -102,7 +102,7 @@ def index(request):
         history.add([field.city_ru + ', ' + field.country_short,
                      field.city + ', ' + field.country_short])
         city = history.history[0]
-        print(history.history)
+        # print(history.history)
         # if not City.objects.filter(name=city).exists():
         #     form.save()
 
