@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'weather_app',
-    'modeltranslation'
 ]
 
 HISTORY_SESSION_ID = 'history'

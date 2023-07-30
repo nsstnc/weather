@@ -91,27 +91,29 @@ def change_lang(request):
 
 def index(request):
     history = History(request)
+    context = {}
     if (request.method == 'POST'):
         form = CityForm(request.POST)
-        city = form['name'].value()
-        splitted = city.split(', ')
-        if lang == 'ru':
-            field = AllCities.objects.get(city_ru=splitted[0], country_short=splitted[1])
-        elif lang == 'en':
-            field = AllCities.objects.get(city=splitted[0], country_short=splitted[1])
-        history.add([field.city_ru + ', ' + field.country_short,
-                     field.city + ', ' + field.country_short])
-        city = history.history[0]
-        # print(history.history)
-        # if not City.objects.filter(name=city).exists():
-        #     form.save()
+        if form.is_valid():
+            city = form['name'].value()
+            splitted = city.split(', ')
+            if lang == 'ru':
+                field = AllCities.objects.get(city_ru=splitted[0], country_short=splitted[1])
+            elif lang == 'en':
+                field = AllCities.objects.get(city=splitted[0], country_short=splitted[1])
+            history.add([field.city_ru + ', ' + field.country_short,
+                         field.city + ', ' + field.country_short])
+            city = history.history[0]
+            # print(history.history)
+            # if not City.objects.filter(name=city).exists():
+            #     form.save()
 
-        context = {
-            'info': get_city_info(city),
-            'form': form,
-            'history': history,
-            'lang': lang,
-        }
+            context = {
+                'info': get_city_info(city),
+                'form': form,
+                'history': history,
+                'lang': lang,
+            }
     else:
         background = "few_clouds.mov"
 
