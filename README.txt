@@ -23,6 +23,16 @@ made it possible to create a high-quality and functional product.
 
 ****************** RUN APPLICATION *****************************
 
+1. IF YOU DON'T HAVE DOCKER
+
 To run the application on Windows, 
 you need to install Python version 3.9 and higher. Then run the start.bat file from this repository.
 (it will install the necessary packages, launch a local server on your system and open the site page in the browser)
+
+2. IF YOU HAVE DOCKER
+
+To run the application on Windows, 
+you need to install Python version 3.9 and higher. Then run the start-with-DOCKER.bat file from this repository.
+(it will create Docker conrainers and images and open the site page in the browser).
+
+Please wait while script finishes!
